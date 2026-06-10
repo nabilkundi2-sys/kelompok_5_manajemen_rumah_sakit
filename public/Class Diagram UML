@@ -1,0 +1,33 @@
+```mermaid
+classDiagram
+
+Pasien <|-- PasienBPJS
+Pasien <|-- PasienAsuransiSwasta
+Pasien <|-- PasienUmum
+
+class Pasien{
+    <<abstract>>
+    #id_pasien : string
+    #nama : string
+    #usia : int
+    #lamaRawat : int
+    #biayaKamarPerHari : float
+}
+
+class PasienBPJS{
+    -nomorPBI : string
+    -faskesAsal : string
+    -kelasKamar : string
+}
+
+class PasienAsuransiSwasta{
+    -namaProvider : string
+    -nomorPolis : string
+    -limitCover : float
+}
+
+class PasienUmum{
+    -nik : string
+    -metodePembayaran : string
+}
+```
