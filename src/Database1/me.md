@@ -14,3 +14,4 @@ buat contoh tabel pasien
 - biaya kamar per hari
 - asuransi
 - status
+
