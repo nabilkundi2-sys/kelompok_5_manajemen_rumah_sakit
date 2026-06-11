@@ -31,21 +31,49 @@ class KoneksiDatabase
     private function __construct()
     {
         try {
-            $dsn = sprintf(
-                'mysql:host=%s;port=%s;dbname=%s;charset=%s',
+            // Hubungkan ke host terlebih dahulu (tanpa dbname) untuk menghindari error 1049
+            $dsnNoDb = sprintf(
+                'mysql:host=%s;port=%s;charset=%s',
                 self::DB_HOST,
                 self::DB_PORT,
-                self::DB_NAME,
                 self::DB_CHARSET
             );
 
             $options = [
                 \PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION,
                 \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
-                \PDO::ATTR_EMULATE_PREPARES   => false,
+                \PDO::ATTR_EMULATE_PREPARES   => true, // Izinkan multi-statements untuk inisialisasi awal
             ];
 
-            $this->koneksi = new \PDO($dsn, self::DB_USER, self::DB_PASS, $options);
+            $this->koneksi = new \PDO($dsnNoDb, self::DB_USER, self::DB_PASS, $options);
+
+            // Buat database jika belum ada
+            $this->koneksi->exec("CREATE DATABASE IF NOT EXISTS `" . self::DB_NAME . "` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci");
+            $this->koneksi->exec("USE `" . self::DB_NAME . "`");
+
+            // Matikan kembali emulate prepares untuk keamanan query selanjutnya jika diperlukan
+            $this->koneksi->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
+
+            // Cek apakah tabel pasien sudah terbuat
+            $tabelAda = false;
+            try {
+                $check = $this->koneksi->query("SHOW TABLES LIKE 'pasien'");
+                $tabelAda = ($check->rowCount() > 0);
+            } catch (\PDOException $e) {
+                $tabelAda = false;
+            }
+
+            // Jika tabel belum ada, impor file SQL secara otomatis
+            if (!$tabelAda) {
+                $sqlFile = __DIR__ . '/rumah_sakit.sql';
+                if (file_exists($sqlFile)) {
+                    $sqlContent = file_get_contents($sqlFile);
+                    // Gunakan koneksi dengan emulate_prepares true untuk mengeksekusi script SQL panjang
+                    $this->koneksi->setAttribute(\PDO::ATTR_EMULATE_PREPARES, true);
+                    $this->koneksi->exec($sqlContent);
+                    $this->koneksi->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
+                }
+            }
 
         } catch (\PDOException $e) {
             die("❌ Gagal terhubung ke database: " . $e->getMessage());
