@@ -4,6 +4,8 @@
 ![Bahasa Pemrograman](https://img.shields.io/badge/Language-PHP_Pure_OOP-blue?style=for-the-badge)
 ![Database](https://img.shields.io/badge/Database-MySQL_Relational-orange?style=for-the-badge)
 
+![Dashboard Aplikasi](public/dashboard.png)
+![Diagram Class](public/DiagramClass.png)
 Sistem backend ini dibangun khusus menggunakan bahasa pemrograman **PHP Murni berorientasi objek (Pure OOP)** tanpa framework, terintegrasi penuh dengan basis data **MySQL**. Aplikasi ini dirancang untuk mengelola tata kelola rekam medis pasien, klasifikasi penjamin kesehatan, serta kalkulasi otomatis komponen beban biaya rawat inap berdasarkan ragam regulasi bisnis penjamin (BPJS Kesehatan, Asuransi Swasta, atau Pasien Umum/Mandiri).
 
 Dokumen ini disusun sebagai **manifes utama proyek dan laporan resmi pengganti format PDF** sesuai dengan regulasi penugasan Pemrograman Berorientasi Objek.
